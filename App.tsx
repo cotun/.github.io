@@ -1,0 +1,255 @@
+
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import Header from './components/Header';
+import StatsDashboard from './components/StatsDashboard';
+import OverviewPage from './components/OverviewPage';
+import CaseCard from './components/CaseCard';
+import { CASES } from './constants';
+import { ACCIDENT25_CASES } from './accident25case';
+import { CaseType } from './types';
+import { Search, ChevronDown, ChevronUp, X } from 'lucide-react';
+
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('stats');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAirport, setSelectedAirport] = useState('전체');
+  const [selectedCompany, setSelectedCompany] = useState('전체');
+  const [showTopBtn, setShowTopBtn] = useState(false);
+  const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
+
+  // 이미지 확대 시 스크롤 잠금
+  useEffect(() => {
+    if (zoomedImageUrl) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [zoomedImageUrl]);
+
+  // 스크롤 감지 (Top 버튼 노출)
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowTopBtn(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 공항 및 조업사 목록 추출 최적화
+  const airports = useMemo(() => ['전체', '인천', '김포', '김해', '제주', '대구', '광주', '청주', '울산'], []);
+  const companies = useMemo(() => {
+    const list = Array.from(new Set(CASES.map(c => c.company)));
+    return ['전체', ...list.sort()];
+  }, []);
+
+  // 필터링 로직 최적화
+  const filteredCases = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    const allCases = activeTab === 'accident25' ? ACCIDENT25_CASES : CASES;
+
+    return allCases.filter((c) => {
+      const matchesTab =
+        (activeTab === 'excellence' && c.type === CaseType.EXCELLENCE) ||
+        (activeTab === 'general' && c.type === CaseType.GENERAL) ||
+        (activeTab === 'accident25' && c.type === CaseType.ACCIDENT25);
+
+      const matchesAirport =
+        selectedAirport === '전체' || c.airport.startsWith(selectedAirport);
+
+      const matchesCompany =
+        selectedCompany === '전체' || c.company === selectedCompany;
+
+      const matchesSearch =
+        query === '' ||
+        c.title.toLowerCase().includes(query) ||
+        c.content.toLowerCase().includes(query) ||
+        c.company.toLowerCase().includes(query) ||
+        c.airport.toLowerCase().includes(query) ||
+        (c.피해상황 || []).join(' ').toLowerCase().includes(query) ||
+        (c.countermeasure || []).join(' ').toLowerCase().includes(query);
+
+      return matchesTab && matchesAirport && matchesCompany && matchesSearch;
+    }).sort((a, b) => a.id - b.id);
+  }, [activeTab, searchQuery, selectedAirport, selectedCompany]);
+
+  // 탭 변경 시 스크롤 상단 이동
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab);
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col overflow-x-hidden">
+      <Header activeTab={activeTab} setActiveTab={handleTabChange} />
+
+      <main className="flex-1 px-1.5 py-3 w-full">
+        {activeTab === 'overview' && <OverviewPage />}
+        {activeTab === 'stats' && <StatsDashboard />}
+
+        {(activeTab === 'excellence' || activeTab === 'general' || activeTab === 'accident25') && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* '25년 사고 요약표 */}
+            {activeTab === 'accident25' && (
+              <div className="bg-white rounded-[24px] border border-red-100 shadow-sm overflow-hidden">
+                <div className="flex items-center gap-2 px-5 py-3.5 border-b border-red-50 bg-red-50/60">
+                  <span className="text-red-500 text-[16px]">⊙</span>
+                  <span className="text-[14px] font-black text-red-700">2025년 공항별 사고 발생 현황 (요약)</span>
+                </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {[
+                      { name: '인천공항', count: 12 },
+                      { name: '김포공항', count: 3 },
+                      { name: '김해공항', count: 2 },
+                      { name: '청주공항', count: 2 },
+                      { name: '울산공항', count: 1 },
+                      { name: '제주공항', count: 1 },
+                    ].map(({ name, count }) => (
+                      <div key={name} className="flex items-center justify-between bg-slate-50 rounded-xl px-3.5 py-2.5 border border-slate-100">
+                        <span className="text-[13px] font-bold text-slate-600">{name}</span>
+                        <span className="text-[14px] font-black text-red-500">{count}<span className="text-[11px] font-bold text-slate-400 ml-0.5">건</span></span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 flex items-center justify-between bg-slate-900 rounded-2xl px-5 py-3">
+                    <span className="text-[14px] font-black text-white">합계</span>
+                    <span className="text-[18px] font-black text-white">21<span className="text-[13px] font-bold text-slate-300 ml-1">건</span></span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 필터 섹션 */}
+            <div className="grid grid-cols-2 gap-3 pb-1">
+              <div className="group">
+                <div className="relative">
+                  <select
+                    value={selectedAirport}
+                    onChange={(e) => setSelectedAirport(e.target.value)}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-2xl px-4 py-3 text-[14px] font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer transition-all"
+                  >
+                    {airports.map(a => (
+                      <option key={a} value={a}>
+                        {a === '전체' ? '전체 공항' : a}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div className="group">
+                <div className="relative">
+                  <select
+                    value={selectedCompany}
+                    onChange={(e) => setSelectedCompany(e.target.value)}
+                    className="w-full appearance-none bg-white border border-slate-200 rounded-2xl px-4 py-3 text-[14px] font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer transition-all"
+                  >
+                    {companies.map(c => (
+                      <option key={c} value={c}>
+                        {c === '전체' ? '전체 조업사' : (c.length > 10 ? `${c.substring(0, 10)}..` : c)}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* 검색 바 */}
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 transition-colors group-focus-within:text-blue-500" />
+              <input
+                type="text"
+                placeholder="검색어를 입력하세요 (제목, 내용, 업체명)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-[14px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none shadow-sm transition-all"
+              />
+            </div>
+
+            {/* 목록 영역 */}
+            <div className="space-y-4 pt-1 pb-16">
+              {filteredCases.map((c) => (
+                <CaseCard
+                  key={c.id}
+                  caseData={c}
+                  highlight={searchQuery.trim()}
+                  onImageZoom={(url) => setZoomedImageUrl(url)}
+                />
+              ))}
+
+              {filteredCases.length === 0 && (
+                <div className="py-24 text-center bg-white rounded-[32px] border border-dashed border-slate-200 shadow-inner">
+                  <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-6 h-6 text-slate-300" />
+                  </div>
+                  <p className="text-slate-500 font-bold text-[15px]">검색 결과가 없습니다.</p>
+                  <button
+                    onClick={() => { setSearchQuery(''); setSelectedAirport('전체'); setSelectedCompany('전체'); }}
+                    className="mt-4 text-blue-500 font-bold text-[13px] hover:underline"
+                  >
+                    필터 초기화
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Top 버튼 */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-8 right-6 w-12 h-12 bg-slate-900 text-white rounded-full shadow-xl flex items-center justify-center transition-all z-[60] active:scale-95 ${showTopBtn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+        aria-label="맨 위로"
+      >
+        <ChevronUp className="w-6 h-6" />
+      </button>
+
+      <footer className="bg-white py-10 border-t border-slate-100 safe-bottom">
+        <div className="px-4 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="h-[2px] w-8 bg-slate-200 rounded-full"></div>
+          </div>
+          <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em] mb-2">Government Portal Service</p>
+          <h4 className="text-[18px] font-extrabold text-slate-800">국토교통부 공항운영과</h4>
+          <p className="text-[13px] text-slate-400 mt-1.5 leading-relaxed font-semibold">지상조업 안전문화 정착을 위해 앞장섭니다.</p>
+          <p className="text-[11px] text-slate-300 mt-6">© 2025 MOLIT. All rights reserved.</p>
+        </div>
+      </footer>
+
+      {/* 글로벌 이미지 확대 모달 */}
+      {zoomedImageUrl && (
+        <div
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/95 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setZoomedImageUrl(null)}
+        >
+          <button
+            className="absolute top-6 right-6 p-4 bg-white/10 hover:bg-white/20 rounded-full text-white transition-all active:scale-95 shadow-lg"
+            onClick={() => setZoomedImageUrl(null)}
+          >
+            <X className="w-8 h-8" />
+          </button>
+
+          <div className="relative max-w-full lg:max-w-5xl w-full max-h-[90vh] flex items-center justify-center overflow-hidden rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">
+            <img
+              src={zoomedImageUrl}
+              alt="확대보기"
+              className="max-w-full max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
