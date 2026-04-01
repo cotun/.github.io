@@ -2,78 +2,101 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>지상안전사고 사례 교육 포털 | 국토교통부</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
-        body { font-family: 'Pretendard', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .active-tab { background-color: #0f172a; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-900 pb-20">
 
-    <header class="sticky top-0 z-50 glass h-16 flex items-center px-6 justify-between shadow-sm">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-blue-200 shadow-lg">
-                <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+    <header class="sticky top-0 z-50 glass border-b border-slate-100 px-4 py-4">
+        <div class="flex items-center justify-between max-w-2xl mx-auto">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+                    <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
+                </div>
+                <h1 class="text-lg font-extrabold tracking-tight">지상안전 포털</h1>
             </div>
-            <h1 class="text-lg font-extrabold tracking-tight text-slate-800">지상안전 포털</h1>
+            <button class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="bell" class="w-5 h-5"></i></button>
         </div>
-        <nav class="hidden md:flex gap-6 text-sm font-semibold text-slate-500">
-            <a href="#" class="text-blue-600">홈</a>
-            <a href="#" class="hover:text-slate-800 transition-colors">사고 사례</a>
-            <a href="#" class="hover:text-slate-800 transition-colors">교육 자료</a>
-            <a href="#" class="hover:text-slate-800 transition-colors">안전 수칙</a>
-        </nav>
-        <button class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-            <i data-lucide="menu" class="w-6 h-6 text-slate-600"></i>
-        </button>
     </header>
 
-    <main class="flex-1 max-w-4xl mx-auto w-full p-6 space-y-8">
-        <section class="py-10 text-center space-y-4">
-            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-[12px] font-bold rounded-full uppercase tracking-wider">Safety Culture</span>
-            <h2 class="text-4xl font-black text-slate-900 leading-tight">지상조업 안전사고<br><span class="text-blue-600">사례 교육 포털</span></h2>
-            <p class="text-slate-500 font-medium">실제 사례를 통해 배우는 지상안전, 우리의 안전문화입니다.</p>
-        </section>
+    <main class="max-w-2xl mx-auto p-4 space-y-6">
+        <div class="flex bg-slate-200/50 p-1 rounded-xl">
+            <button class="flex-1 py-2.5 text-sm font-bold rounded-lg active-tab">사례집</button>
+            <button class="flex-1 py-2.5 text-sm font-bold text-slate-500 rounded-lg hover:bg-white/50">교육영상</button>
+            <button class="flex-1 py-2.5 text-sm font-bold text-slate-500 rounded-lg hover:bg-white/50">안전수칙</button>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="glass p-6 rounded-2xl hover:shadow-xl transition-all cursor-pointer group">
-                <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <i data-lucide="alert-circle" class="w-6 h-6"></i>
+        <div class="space-y-3">
+            <div class="relative">
+                <i data-lucide="search" class="absolute left-3 top-3 w-5 h-5 text-slate-400"></i>
+                <input type="text" placeholder="사고 유형, 키워드 검색..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all">
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <span class="px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-full whitespace-nowrap">전체</span>
+                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">조업장비</span>
+                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">항공기 접촉</span>
+                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">인적오류</span>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all border-l-4 border-l-orange-500">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="px-2.5 py-1 bg-orange-50 text-orange-600 text-[10px] font-bold rounded-md uppercase">High Risk</span>
+                    <span class="text-[11px] text-slate-400 font-medium">2026.03.25</span>
                 </div>
-                <h3 class="text-xl font-bold mb-2">최근 사고 사례</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">최근 발생한 지상안전사고의 원인과 대책을 분석한 리포트입니다.</p>
+                <h3 class="text-[17px] font-bold text-slate-800 mb-2 leading-snug">터그카 이동 중 항공기 엔진 접촉 사고</h3>
+                <p class="text-sm text-slate-500 leading-relaxed mb-4">강풍 시 조업 가이드라인 미준수로 인한 접촉 사고 사례 분석...</p>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                    <div class="flex items-center gap-2 text-slate-400">
+                        <i data-lucide="eye" class="w-4 h-4"></i><span class="text-xs">1,240</span>
+                    </div>
+                    <button class="text-xs font-bold text-blue-600 flex items-center gap-1">상세보기 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
             </div>
 
-            <div class="glass p-6 rounded-2xl hover:shadow-xl transition-all cursor-pointer group">
-                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <i data-lucide="book-open" class="w-6 h-6"></i>
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all border-l-4 border-l-blue-500">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md uppercase">Standard</span>
+                    <span class="text-[11px] text-slate-400 font-medium">2026.03.20</span>
                 </div>
-                <h3 class="text-xl font-bold mb-2">교육 자료실</h3>
-                <p class="text-slate-500 text-sm leading-relaxed">현장에서 즉시 활용 가능한 동영상 및 문서 교육 자료를 확인하세요.</p>
+                <h3 class="text-[17px] font-bold text-slate-800 mb-2 leading-snug">지상 조업자 끼임 사고 예방 수칙</h3>
+                <p class="text-sm text-slate-500 leading-relaxed mb-4">컨베이어 벨트 작업 시 반드시 지켜야 할 LOTO 절차 안내...</p>
+                <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                    <div class="flex items-center gap-2 text-slate-400">
+                        <i data-lucide="eye" class="w-4 h-4"></i><span class="text-xs">856</span>
+                    </div>
+                    <button class="text-xs font-bold text-blue-600 flex items-center gap-1">상세보기 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
             </div>
         </div>
     </main>
 
-    <footer class="py-12 bg-white border-t border-slate-200">
-        <div class="max-w-4xl mx-auto px-6 text-center space-y-6">
-            <div class="flex justify-center">
+    <footer class="bg-white py-10 border-t border-slate-100 mt-10">
+        <div class="px-4 text-center">
+            <div class="flex justify-center mb-4">
                 <div class="h-[2px] w-8 bg-slate-200 rounded-full"></div>
             </div>
-            <div class="space-y-2">
-                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em]">Government Portal Service</p>
-                <h4 class="text-[18px] font-extrabold text-slate-800">국토교통부 공항운영과</h4>
-                <p class="text-[13px] text-slate-400 font-semibold leading-relaxed">지상조업 안전문화 정착을 위해 앞장섭니다.</p>
-            </div>
-            <p class="text-[11px] text-slate-300">© 2025 MOLIT. All rights reserved.</p>
+            <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em] mb-2">Government Portal Service</p>
+            <h4 class="text-[18px] font-extrabold text-slate-800">국토교통부 공항운영과</h4>
+            <p class="text-[13px] text-slate-400 mt-1.5 leading-relaxed font-semibold">지상조업 안전문화 정착을 위해 앞장섭니다.</p>
+            <p class="text-[11px] text-slate-300 mt-6">© 2026 MOLIT. All rights reserved.</p>
         </div>
     </footer>
 
+    <button class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+
     <script>
-        // Lucide 아이콘 초기화
         lucide.createIcons();
     </script>
 </body>
