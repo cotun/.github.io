@@ -2,102 +2,191 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>지상안전사고 사례 교육 포털 | 국토교통부</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공항 지상안전사고 예방 — 관리자 대시보드</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        body { font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .active-tab { background-color: #0f172a; color: white; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 pb-20">
+<body class="text-slate-800 pb-12">
 
-    <header class="sticky top-0 z-50 glass border-b border-slate-100 px-4 py-4">
-        <div class="flex items-center justify-between max-w-2xl mx-auto">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
-                    <i data-lucide="shield-check" class="text-white w-5 h-5"></i>
-                </div>
-                <h1 class="text-lg font-extrabold tracking-tight">지상안전 포털</h1>
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="shield-alert" class="w-6 h-6 text-blue-400"></i>
+                <h1 class="text-lg font-bold tracking-wide">지상안전사고 예방 <span class="text-slate-400 font-normal text-sm ml-2">관리자 시스템</span></h1>
             </div>
-            <button class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="bell" class="w-5 h-5"></i></button>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-300 hover:text-white"><i data-lucide="bell" class="w-5 h-5"></i></button>
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold border-2 border-slate-700 cursor-pointer">
+                    관리
+                </div>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-2xl mx-auto p-4 space-y-6">
-        <div class="flex bg-slate-200/50 p-1 rounded-xl">
-            <button class="flex-1 py-2.5 text-sm font-bold rounded-lg active-tab">사례집</button>
-            <button class="flex-1 py-2.5 text-sm font-bold text-slate-500 rounded-lg hover:bg-white/50">교육영상</button>
-            <button class="flex-1 py-2.5 text-sm font-bold text-slate-500 rounded-lg hover:bg-white/50">안전수칙</button>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
+        
+        <div class="flex justify-between items-end">
+            <div>
+                <h2 class="text-2xl font-extrabold text-slate-900">안전 지표 현황 (Dashboard)</h2>
+                <p class="text-sm text-slate-500 mt-1">2026년 3월 기준 전체 공항 지상안전사고 통계 및 모니터링</p>
+            </div>
+            <button class="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 flex items-center gap-2 shadow-sm">
+                <i data-lucide="download" class="w-4 h-4"></i> 리포트 다운로드
+            </button>
         </div>
 
-        <div class="space-y-3">
-            <div class="relative">
-                <i data-lucide="search" class="absolute left-3 top-3 w-5 h-5 text-slate-400"></i>
-                <input type="text" placeholder="사고 유형, 키워드 검색..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-slate-900/5 transition-all">
-            </div>
-            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                <span class="px-4 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-full whitespace-nowrap">전체</span>
-                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">조업장비</span>
-                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">항공기 접촉</span>
-                <span class="px-4 py-1.5 bg-white border border-slate-200 text-slate-500 text-xs font-bold rounded-full whitespace-nowrap">인적오류</span>
-            </div>
-        </div>
-
-        <div class="space-y-4">
-            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all border-l-4 border-l-orange-500">
-                <div class="flex justify-between items-start mb-3">
-                    <span class="px-2.5 py-1 bg-orange-50 text-orange-600 text-[10px] font-bold rounded-md uppercase">High Risk</span>
-                    <span class="text-[11px] text-slate-400 font-medium">2026.03.25</span>
-                </div>
-                <h3 class="text-[17px] font-bold text-slate-800 mb-2 leading-snug">터그카 이동 중 항공기 엔진 접촉 사고</h3>
-                <p class="text-sm text-slate-500 leading-relaxed mb-4">강풍 시 조업 가이드라인 미준수로 인한 접촉 사고 사례 분석...</p>
-                <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                    <div class="flex items-center gap-2 text-slate-400">
-                        <i data-lucide="eye" class="w-4 h-4"></i><span class="text-xs">1,240</span>
-                    </div>
-                    <button class="text-xs font-bold text-blue-600 flex items-center gap-1">상세보기 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="card p-5 border-l-4 border-l-blue-600">
+                <p class="text-sm font-semibold text-slate-500 mb-1">올해 누적 사고</p>
+                <div class="flex items-end justify-between">
+                    <h3 class="text-3xl font-black text-slate-800">124<span class="text-base font-medium text-slate-500 ml-1">건</span></h3>
+                    <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-full flex items-center"><i data-lucide="trending-up" class="w-3 h-3 mr-1"></i>+12%</span>
                 </div>
             </div>
-
-            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all border-l-4 border-l-blue-500">
-                <div class="flex justify-between items-start mb-3">
-                    <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md uppercase">Standard</span>
-                    <span class="text-[11px] text-slate-400 font-medium">2026.03.20</span>
+            <div class="card p-5 border-l-4 border-l-orange-500">
+                <p class="text-sm font-semibold text-slate-500 mb-1">고위험 사례 (High Risk)</p>
+                <div class="flex items-end justify-between">
+                    <h3 class="text-3xl font-black text-slate-800">18<span class="text-base font-medium text-slate-500 ml-1">건</span></h3>
+                    <i data-lucide="alert-triangle" class="w-6 h-6 text-orange-200"></i>
                 </div>
-                <h3 class="text-[17px] font-bold text-slate-800 mb-2 leading-snug">지상 조업자 끼임 사고 예방 수칙</h3>
-                <p class="text-sm text-slate-500 leading-relaxed mb-4">컨베이어 벨트 작업 시 반드시 지켜야 할 LOTO 절차 안내...</p>
-                <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                    <div class="flex items-center gap-2 text-slate-400">
-                        <i data-lucide="eye" class="w-4 h-4"></i><span class="text-xs">856</span>
-                    </div>
-                    <button class="text-xs font-bold text-blue-600 flex items-center gap-1">상세보기 <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+            </div>
+            <div class="card p-5 border-l-4 border-l-slate-400">
+                <p class="text-sm font-semibold text-slate-500 mb-1">조사 진행 중</p>
+                <div class="flex items-end justify-between">
+                    <h3 class="text-3xl font-black text-slate-800">5<span class="text-base font-medium text-slate-500 ml-1">건</span></h3>
+                    <i data-lucide="search" class="w-6 h-6 text-slate-200"></i>
+                </div>
+            </div>
+            <div class="card p-5 border-l-4 border-l-green-600">
+                <p class="text-sm font-semibold text-slate-500 mb-1">조치 완료율</p>
+                <div class="flex items-end justify-between">
+                    <h3 class="text-3xl font-black text-slate-800">95.9<span class="text-base font-medium text-slate-500 ml-1">%</span></h3>
+                    <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center"><i data-lucide="check-circle" class="w-3 h-3 mr-1"></i>정상</span>
                 </div>
             </div>
         </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">월별 사고 발생 추이</h3>
+                <div class="relative h-[300px] w-full">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            <div class="card p-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">공항별 발생 비중</h3>
+                <div class="relative h-[300px] w-full flex justify-center">
+                    <canvas id="airportChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">최근 사고/장애 접수 목록</h3>
+                <button class="text-sm text-blue-600 font-semibold hover:underline">전체 보기</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left whitespace-nowrap">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3">발생일자</th>
+                            <th class="px-6 py-3">공항</th>
+                            <th class="px-6 py-3">사고 유형</th>
+                            <th class="px-6 py-3">위험도</th>
+                            <th class="px-6 py-3">처리 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">2026.03.25</td>
+                            <td class="px-6 py-4">인천 (ICN)</td>
+                            <td class="px-6 py-4 text-slate-600">터그카 - 항공기 엔진 접촉</td>
+                            <td class="px-6 py-4"><span class="px-2.5 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">High</span></td>
+                            <td class="px-6 py-4"><span class="flex items-center text-orange-600 font-semibold"><div class="w-2 h-2 rounded-full bg-orange-500 mr-2"></div>조사중</span></td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">2026.03.21</td>
+                            <td class="px-6 py-4">김포 (GMP)</td>
+                            <td class="px-6 py-4 text-slate-600">스텝카 유압 누출</td>
+                            <td class="px-6 py-4"><span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-md text-xs font-bold">Medium</span></td>
+                            <td class="px-6 py-4"><span class="flex items-center text-slate-500 font-semibold"><div class="w-2 h-2 rounded-full bg-slate-400 mr-2"></div>조치완료</span></td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="px-6 py-4 font-medium text-slate-900">2026.03.18</td>
+                            <td class="px-6 py-4">제주 (CJU)</td>
+                            <td class="px-6 py-4 text-slate-600">수하물 조업자 낙상</td>
+                            <td class="px-6 py-4"><span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-md text-xs font-bold">Medium</span></td>
+                            <td class="px-6 py-4"><span class="flex items-center text-slate-500 font-semibold"><div class="w-2 h-2 rounded-full bg-slate-400 mr-2"></div>조치완료</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </main>
 
-    <footer class="bg-white py-10 border-t border-slate-100 mt-10">
-        <div class="px-4 text-center">
-            <div class="flex justify-center mb-4">
-                <div class="h-[2px] w-8 bg-slate-200 rounded-full"></div>
-            </div>
-            <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em] mb-2">Government Portal Service</p>
-            <h4 class="text-[18px] font-extrabold text-slate-800">국토교통부 공항운영과</h4>
-            <p class="text-[13px] text-slate-400 mt-1.5 leading-relaxed font-semibold">지상조업 안전문화 정착을 위해 앞장섭니다.</p>
-            <p class="text-[11px] text-slate-300 mt-6">© 2026 MOLIT. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <button class="fixed bottom-6 right-6 w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform">
-        <i data-lucide="plus" class="w-6 h-6"></i>
-    </button>
-
     <script>
+        // 1. Lucide 아이콘 렌더링
         lucide.createIcons();
+
+        // 2. Chart.js 공통 설정
+        Chart.defaults.font.family = "'Pretendard', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        // 3. 월별 추이 차트 (Bar Chart)
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        new Chart(ctxTrend, {
+            type: 'bar',
+            data: {
+                labels: ['10월', '11월', '12월', '1월', '2월', '3월'],
+                datasets: [{
+                    label: '발생 건수',
+                    data: [12, 19, 15, 8, 11, 14],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#f1f5f9' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 4. 공항별 비중 차트 (Doughnut Chart - 원본 코드 컬러 파레트 반영)
+        const ctxAirport = document.getElementById('airportChart').getContext('2d');
+        new Chart(ctxAirport, {
+            type: 'doughnut',
+            data: {
+                labels: ['인천', '김포', '제주', '김해', '기타'],
+                datasets: [{
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: ['#0969da', '#1a7f37', '#bc4c00', '#8250df', '#57606a'],
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 12, usePointStyle: true } }
+                }
+            }
+        });
     </script>
 </body>
 </html>
